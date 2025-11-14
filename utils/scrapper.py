@@ -10,20 +10,6 @@ from selenium.common.exceptions import NoSuchElementException, TimeoutException
 import re
 import os
 
-CSV_PATH = "../data/reviews_mercadolivre.csv"
-
-os.makedirs("../data", exist_ok=True)
-
-if not os.path.exists(CSV_PATH):
-    df_init = pd.DataFrame(columns=["Nota", "Texto"])
-    df_init.to_csv(CSV_PATH, index=False)
-
-
-def salvar_review_incremental(nota, texto):
-    """Salva cada review individualmente no CSV."""
-    df = pd.DataFrame([{"Nota": nota, "Texto": texto}])
-    df.to_csv(CSV_PATH, index=False, mode="a", header=False)
-
 
 def setup_driver():
     servico = Service(ChromeDriverManager().install())
@@ -114,8 +100,6 @@ def extrair_reviews_produto(url_produto, driver):
 
             if nota and texto and len(texto) > 1:
                 dados_reviews.append({"Nota": nota, "Texto": texto})
-
-                salvar_review_incremental(nota, texto)
 
                 print(f"     - Review salvo. Nota {nota} | {texto[:40]}...")
 
@@ -238,3 +222,21 @@ try:
 finally:
     print("Fechando navegador...")
     driver.quit()
+
+if todos_os_reviews:
+    print(f"\nColeta finalizada. Total de {len(todos_os_reviews)} reviews.")
+    df_final = pd.DataFrame(todos_os_reviews)
+    
+    df_final = df_final.drop_duplicates(subset=['Texto'])
+    print(f"Total de {len(df_final)} reviews únicos.")
+
+    os.makedirs("../data", exist_ok=True)
+    caminho_final = "../data/reviews_mercadolivre.csv"
+    
+    df_final.to_csv(caminho_final, index=False)
+    
+    print(f"\nDataFrame salvo com sucesso em '{caminho_final}'!")
+    print(df_final.head())
+
+else:
+    print("Nenhum review foi coletado.")
