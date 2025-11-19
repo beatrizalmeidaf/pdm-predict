@@ -35,6 +35,8 @@ if "Time Series (Daily)" in data:
     print(f"Dados de {df.index.min().date()} até {df.index.max().date()}")
     print(f"Total de linhas: {len(df)}")
     
+    df = df.rename_axis("Date").reset_index()
+    
     base_dir = os.path.dirname(os.path.abspath(__file__))  
     data_dir = os.path.join(base_dir, "../data")
     save_path = os.path.join(data_dir, "aapl_history.csv")
