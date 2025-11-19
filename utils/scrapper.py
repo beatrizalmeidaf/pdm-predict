@@ -28,7 +28,7 @@ if "Time Series (Daily)" in data:
     df = df.apply(pd.to_numeric)
     df.index = pd.to_datetime(df.index)
 
-    # ultimos 12 meses
+    # últimos 12 meses
     data_limite = datetime.now() - timedelta(days=365)
     df = df[df.index >= data_limite].sort_index()
 
@@ -36,7 +36,7 @@ if "Time Series (Daily)" in data:
     print(f"Total de linhas: {len(df)}")
     
     df = df.rename_axis("Date").reset_index()
-    
+
     base_dir = os.path.dirname(os.path.abspath(__file__))  
     data_dir = os.path.join(base_dir, "../data")
     save_path = os.path.join(data_dir, "aapl_history.csv")
